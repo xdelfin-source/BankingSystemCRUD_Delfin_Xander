@@ -3,7 +3,6 @@ import java.sql.*;
 
 public class BankingOperations {
 
-    // 1. Add Customer & Account (No changes needed)
     public static boolean addCustomerAccount(String firstName, String lastName, String email, String phone, String accountType) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             conn.setAutoCommit(false);
@@ -28,8 +27,7 @@ public class BankingOperations {
             return false;
         }
     }
-
-    // 2. Delete Account (No changes needed)
+    
     public static boolean deleteAccount(int accountId) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement("DELETE FROM Account WHERE account_id = ?");
@@ -41,10 +39,10 @@ public class BankingOperations {
         }
     }
 
-    // 3. Process Transaction - FIXED VERSION
+   
     public static String processTransaction(int accountId, String type, double amount) {
         try (Connection conn = DatabaseConnection.getConnection()) {
-            // A. CHECK IF ACCOUNT EXISTS AND GET CURRENT BALANCE
+    
             PreparedStatement checkStmt = conn.prepareStatement("SELECT balance FROM Account WHERE account_id = ?");
             checkStmt.setInt(1, accountId);
             ResultSet rsCheck = checkStmt.executeQuery();
@@ -55,12 +53,12 @@ public class BankingOperations {
 
             double currentBalance = rsCheck.getDouble("balance");
 
-            // B. CHECK FOR INSUFFICIENT FUNDS
+     
             if (type.equals("Withdraw") && currentBalance < amount) {
                 return "Error: Insufficient Funds.";
             }
 
-            // C. UPDATE THE BALANCE
+      
             String updateQuery = type.equals("Deposit")
                     ? "UPDATE Account SET balance = balance + ? WHERE account_id = ?"
                     : "UPDATE Account SET balance = balance - ? WHERE account_id = ?";
@@ -70,7 +68,7 @@ public class BankingOperations {
             pstmt.setInt(2, accountId);
             pstmt.executeUpdate();
 
-            // D. LOG THE TRANSACTION (This is what fixes your History Window!)
+          
             String logQuery = "INSERT INTO Transaction (account_id, transaction_type, amount, transaction_date) VALUES (?, ?, ?, NOW())";
             PreparedStatement logStmt = conn.prepareStatement(logQuery);
             logStmt.setInt(1, accountId);
@@ -78,7 +76,7 @@ public class BankingOperations {
             logStmt.setDouble(3, amount);
             logStmt.executeUpdate();
 
-            // E. FETCH NEW BALANCE
+         
             PreparedStatement getBalance = conn.prepareStatement("SELECT balance FROM Account WHERE account_id = ?");
             getBalance.setInt(1, accountId);
             ResultSet rs = getBalance.executeQuery();
@@ -95,7 +93,7 @@ public class BankingOperations {
         }
     }
 
-    // 4. Load Accounts (No changes needed)
+    
     public static DefaultTableModel getAccountsTableModel(String search) {
         String[] columns = {"Account ID", "Customer ID", "First Name", "Last Name", "Type", "Balance"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
@@ -113,12 +111,12 @@ public class BankingOperations {
         return model;
     }
 
-    // 5. Load History (Fixed Column Name mapping)
+   
     public static DefaultTableModel getHistoryTableModel(String accountId) {
         String[] columns = {"Trans ID", "Account ID", "Type", "Amount", "Date"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
         try (Connection conn = DatabaseConnection.getConnection()) {
-            // Using ORDER BY so newest transactions show at the top
+
             String sql = accountId.isEmpty() ? "SELECT * FROM Transaction ORDER BY transaction_date DESC"
                     : "SELECT * FROM Transaction WHERE account_id = ? ORDER BY transaction_date DESC";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -128,7 +126,7 @@ public class BankingOperations {
                 model.addRow(new Object[]{
                         rs.getInt("transaction_id"),
                         rs.getInt("account_id"),
-                        rs.getString("transaction_type"), // Match your DB column name exactly
+                        rs.getString("transaction_type"), 
                         rs.getDouble("amount"),
                         rs.getTimestamp("transaction_date")
                 });
