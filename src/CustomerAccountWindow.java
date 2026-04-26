@@ -3,7 +3,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class CustomerAccountWindow extends JFrame {
-    private JFrame parentFrame; // 1. Added to store the Main Menu
+    private JFrame parentFrame; 
     private JPanel mainPanel;
     private JTextField txtFirstName;
     private JTextField txtLastName;
@@ -16,20 +16,20 @@ public class CustomerAccountWindow extends JFrame {
     private JButton deleteAccountButton;
     private JButton btnBack;
 
-    // 2. Updated Constructor to accept the parent JFrame
+    
     public CustomerAccountWindow(JFrame parent) {
         this.parentFrame = parent;
 
-        // 3. Basic Window Setup
+      
         setTitle("Customer & Account Management");
         setContentPane(mainPanel);
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // 4. Add Customer Button Logic
+      
         btnAdd.addActionListener(e -> {
-            // Safety Check: Ensure an account type is selected
+           
             Object selectedType = cbAccountType.getSelectedItem();
             if (selectedType == null) {
                 JOptionPane.showMessageDialog(this, "Please select an Account Type!");
@@ -52,7 +52,7 @@ public class CustomerAccountWindow extends JFrame {
             }
         });
 
-        // 5. Delete Account Button Logic
+    
         deleteAccountButton.addActionListener(e -> {
             int selectedRow = accountTable.getSelectedRow();
             if (selectedRow == -1) {
@@ -76,7 +76,7 @@ public class CustomerAccountWindow extends JFrame {
             }
         });
 
-        // 6. Automatic Search Logic
+  
         txtSearch.getDocument().addDocumentListener(new DocumentListener() {
             public void insertUpdate(DocumentEvent e) { updateSearch(); }
             public void removeUpdate(DocumentEvent e) { updateSearch(); }
@@ -86,15 +86,15 @@ public class CustomerAccountWindow extends JFrame {
             }
         });
 
-        // 7. Back to Menu Logic (Hides this, Shows Menu)
+       
         btnBack.addActionListener(e -> {
             if (parentFrame != null) {
-                parentFrame.setVisible(true); // Show the menu again
+                parentFrame.setVisible(true); 
             }
-            this.dispose(); // Close this window
+            this.dispose(); 
         });
 
-        // 8. Load initial table data
+
         SwingUtilities.invokeLater(() -> refreshTable(""));
     }
 
